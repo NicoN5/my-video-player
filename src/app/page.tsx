@@ -1,5 +1,5 @@
 'use client'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 
 function App() {
   const [url, setUrl] = useState<string | null>(null);
@@ -18,6 +18,24 @@ function App() {
   setInterval(() => {
     setCurrentTime(Math.floor((videoRef.current?.currentTime || -1) * 10) / 10)
   }, 10)
+
+  useEffect(() => {
+    const onKeydown = (e: KeyboardEvent) => {
+      if (e.key !== ' ' || !videoRef.current) return
+      if (videoRef.current.paused) {
+        videoRef.current.play()
+      } else {
+        videoRef.current.pause()
+      }
+    }
+
+    document.addEventListener('keydown', onKeydown)
+
+    return () => {
+      document.removeEventListener('keydown', onKeydown)
+    }
+  }, [])
+
 
   return (
     <div
